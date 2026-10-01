@@ -27,14 +27,18 @@ export default function App() {
   });
 
   useEffect(() => {
+    const productIdFromUrl = new URLSearchParams(window.location.search).get('product');
+    const initialView: ViewMode = productIdFromUrl ? 'landing-detail' : 'home';
     const initialState = window.history.state && typeof window.history.state === 'object'
       ? window.history.state
       : {};
     window.history.replaceState(
-      { ...initialState, oryxStore: true, view: 'home', productId: null },
+      { ...initialState, oryxStore: true, view: initialView, productId: productIdFromUrl },
       '',
       window.location.href
     );
+    setCurrentView(initialView);
+    setSelectedProductId(productIdFromUrl);
 
     const handlePopState = (event: PopStateEvent) => {
       const state = event.state;
@@ -81,12 +85,18 @@ export default function App() {
   const handleViewChange = (view: ViewMode, id?: string) => {
     const productId = view === 'landing-detail' ? id ?? selectedProductId : null;
     const currentState = window.history.state;
+    const nextUrl = new URL(window.location.href);
+    if (productId) {
+      nextUrl.searchParams.set('product', productId);
+    } else {
+      nextUrl.searchParams.delete('product');
+    }
 
-    if (!currentState?.oryxStore || currentState.view !== view || currentState.productId !== productId) {
+    if (!currentState?.oryxStore || currentState.view !== view || currentState.productId !== productId || window.location.href !== nextUrl.href) {
       window.history.pushState(
         { oryxStore: true, view, productId },
         '',
-        window.location.href
+        `${nextUrl.pathname}${nextUrl.search}${nextUrl.hash}`
       );
     }
 
@@ -104,7 +114,9 @@ export default function App() {
   };
 
   const currentProducts = products;
-  const activeProduct = currentProducts.find(p => p.id === selectedProductId) || currentProducts[0];
+  const activeProduct = selectedProductId
+    ? currentProducts.find(p => p.id === selectedProductId)
+    : currentProducts[0];
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans selection:bg-indigo-600 selection:text-white" dir="rtl">
@@ -148,6 +160,25 @@ export default function App() {
             onRelatedProductSelect={(productId) => handleViewChange('landing-detail', productId)}
             onOrderSuccess={updateOrdersCount}
           />
+        )}
+
+        {currentView === 'landing-detail' && !activeProduct && (
+          <div className="mx-auto max-w-2xl px-4 py-24 text-center">
+            {isProductsLoading ? (
+              <p className="font-bold text-slate-600">جاري تحميل المنتج...</p>
+            ) : (
+              <>
+                <h2 className="mb-4 text-xl font-black text-slate-900">لم يتم العثور على هذا المنتج</h2>
+                <button
+                  type="button"
+                  onClick={() => handleViewChange('store')}
+                  className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-bold text-white hover:bg-indigo-700"
+                >
+                  العودة إلى المتجر
+                </button>
+              </>
+            )}
+          </div>
         )}
 
         {currentView === 'contact' && (

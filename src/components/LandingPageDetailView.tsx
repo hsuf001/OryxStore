@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle2, ShieldCheck, Truck, Phone, User, Building2, Play, Video, Star, CreditCard } from 'lucide-react';
+import { Check, CheckCircle2, Clipboard, ShieldCheck, Truck, Phone, User, Building2, Play, Video, Star, CreditCard, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { Product } from '../types';
 import { getProductReviews } from '../utils/productReviews';
 import { createProductSnapshot, saveOrder } from '../utils/orderStorage';
@@ -28,6 +28,7 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
   onRelatedProductSelect,
   onOrderSuccess,
 }) => {
+  const [linkCopied, setLinkCopied] = useState(false);
   const [customerReviews, setCustomerReviews] = useState(() => getProductReviews(product));
   const [reviewName, setReviewName] = useState('');
   const [reviewCity, setReviewCity] = useState('');
@@ -63,8 +64,29 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
   // Image gallery state
   const allImages = [product.image, ...(product.images || [])].filter(Boolean);
   const [activeImageIndex, setActiveImageIndex] = useState(0);
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [showVideoActive, setShowVideoActive] = useState(false);
   const [resolvedVideoUrl, setResolvedVideoUrl] = useState<string | null>(null);
+
+  const showPreviousImage = () => {
+    setActiveImageIndex((currentIndex) => (currentIndex - 1 + allImages.length) % allImages.length);
+  };
+  const showNextImage = () => {
+    setActiveImageIndex((currentIndex) => (currentIndex + 1) % allImages.length);
+  };
+
+  useEffect(() => {
+    if (!isImageViewerOpen) return;
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setIsImageViewerOpen(false);
+      if (event.key === 'ArrowLeft') showPreviousImage();
+      if (event.key === 'ArrowRight') showNextImage();
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isImageViewerOpen, allImages.length]);
 
   useEffect(() => {
     async function loadVideo() {
@@ -128,6 +150,16 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
     setReviewComment('');
     setReviewRating(5);
     setReviewSubmitted(true);
+  };
+
+  const handleCopyProductLink = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setLinkCopied(true);
+      window.setTimeout(() => setLinkCopied(false), 2000);
+    } catch {
+      alert('تعذر نسخ الرابط. انسخ الرابط من شريط العنوان.');
+    }
   };
 
   const totalPrice = selectedBundleIndex !== null && product.bundles && product.bundles[selectedBundleIndex]
@@ -260,6 +292,16 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
 
       {/* 3. Main Container */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-5 sm:pt-6 space-y-5">
+        <div className="flex justify-start">
+          <button
+            type="button"
+            onClick={handleCopyProductLink}
+            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-100"
+          >
+            {linkCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Clipboard className="h-4 w-4" />}
+            {linkCopied ? 'تم نسخ رابط المنتج' : 'نسخ رابط المنتج'}
+          </button>
+        </div>
         
         {(() => {
           const badgeText = product.badge || '🔥 عرض خاص - توصيل مجاني';
@@ -289,12 +331,22 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
                     ></video>
                   )
                 ) : (
-                  <img
-                    src={allImages[activeImageIndex] || product.image}
-                    alt={product.title}
-                    className="block w-full h-full object-contain object-center"
-                    referrerPolicy="no-referrer"
-                  />
+                  <button
+                    type="button"
+                    onClick={() => setIsImageViewerOpen(true)}
+                    aria-label="افتح صورة المنتج بالحجم الكامل"
+                    className="group block w-full h-full cursor-zoom-in"
+                  >
+                    <img
+                      src={allImages[activeImageIndex] || product.image}
+                      alt={product.title}
+                      className="block w-full h-full object-contain object-center"
+                      referrerPolicy="no-referrer"
+                    />
+                    <span className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-950/80 px-3 py-2 text-xs font-bold text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                      <ZoomIn className="h-4 w-4" /> عرض تفاصيل العرض والصور
+                    </span>
+                  </button>
                 )}
 
                 {product.oldPrice && (
@@ -347,6 +399,48 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
                   ))}
                 </div>
               )}
+            </div>
+          );
+
+          const imageViewer = isImageViewerOpen && !showVideoActive && (
+            <div
+              role="dialog"
+              aria-modal="true"
+              aria-label={`صور ${product.title}`}
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-3 sm:p-6"
+              onClick={() => setIsImageViewerOpen(false)}
+            >
+              <div className="relative flex max-h-full w-full max-w-6xl flex-col gap-3" onClick={(event) => event.stopPropagation()}>
+                <div className="flex items-start justify-between gap-4 text-white">
+                  <div className="text-right">
+                    <h2 className="text-base font-black sm:text-lg">{headline}</h2>
+                    <p className="mt-1 text-sm font-semibold text-amber-300">{badgeText} · {product.price} ر.س</p>
+                  </div>
+                  <button type="button" onClick={() => setIsImageViewerOpen(false)} aria-label="إغلاق عرض الصور" className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-white/10 text-white hover:bg-white/20">
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="relative flex min-h-0 flex-1 items-center justify-center">
+                  <img src={allImages[activeImageIndex] || product.image} alt={`${product.title} - الصورة ${activeImageIndex + 1}`} className="max-h-[68vh] max-w-full object-contain" referrerPolicy="no-referrer" />
+                  {allImages.length > 1 && <>
+                    <button type="button" onClick={showPreviousImage} aria-label="الصورة السابقة" className="absolute right-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white hover:bg-black/80 sm:right-4">
+                      <ChevronRight className="h-6 w-6" />
+                    </button>
+                    <button type="button" onClick={showNextImage} aria-label="الصورة التالية" className="absolute left-2 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-full bg-black/60 text-white hover:bg-black/80 sm:left-4">
+                      <ChevronLeft className="h-6 w-6" />
+                    </button>
+                  </>}
+                </div>
+
+                <div className="flex items-center justify-center gap-2 overflow-x-auto py-1">
+                  {allImages.map((imgUrl, index) => (
+                    <button key={`${imgUrl}-${index}`} type="button" onClick={() => setActiveImageIndex(index)} aria-label={`عرض الصورة ${index + 1}`} aria-current={activeImageIndex === index} className={`h-14 w-14 shrink-0 overflow-hidden rounded-md border-2 sm:h-16 sm:w-16 ${activeImageIndex === index ? 'border-amber-400' : 'border-white/30'}`}>
+                      <img src={imgUrl} alt="" className="h-full w-full object-cover" referrerPolicy="no-referrer" />
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           );
 
@@ -663,6 +757,7 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
 
           return (
             <>
+              {imageViewer}
               {/* ================= MOBILE LAYOUT (lg:hidden) ================= */}
               {/* Order requested: Title -> Images -> Form -> Description (Urgency bar removed on mobile) */}
               <div className="lg:hidden space-y-4">

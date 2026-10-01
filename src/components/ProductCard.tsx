@@ -21,12 +21,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       {/* Image & Badges */}
       <div 
         onClick={() => onOrderClick(product)}
-        className="relative aspect-[3/2] cursor-pointer overflow-hidden bg-white sm:aspect-[4/3] sm:p-1"
+        className="relative aspect-square cursor-pointer overflow-hidden bg-slate-100"
       >
         <img
           src={product.image}
           alt={product.title}
-          className="h-full w-full scale-125 object-contain object-center transition-transform duration-500 group-hover:scale-[1.3] sm:scale-110 sm:group-hover:scale-[1.13]"
+          className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
           referrerPolicy="no-referrer"
         />
       </div>
