@@ -519,7 +519,7 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
                               <span className="font-black text-sm text-slate-950 leading-tight">{bundle.label}</span>
                               <span className="text-xs text-slate-700 font-bold inline-flex flex-wrap items-center gap-x-1">
                                 {bundle.quantity === 1 && product.oldPrice && (
-                                  <span className="text-slate-500 line-through decoration-rose-600 decoration-2">
+                                  <span className="text-sm sm:text-base font-extrabold text-slate-700 line-through decoration-rose-600 decoration-2">
                                     {product.oldPrice} ر.س
                                   </span>
                                 )}

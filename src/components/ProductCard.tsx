@@ -58,7 +58,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
               {product.price} <span className="text-xs sm:text-base font-bold">ر.س</span>
             </span>
             {product.oldPrice && (
-              <span className="shrink-0 text-[11px] font-extrabold text-slate-700 line-through decoration-rose-600 decoration-2 sm:text-sm">
+              <span className="shrink-0 text-sm font-extrabold text-slate-700 line-through decoration-rose-600 decoration-2 sm:text-base">
                 {product.oldPrice} ر.س
               </span>
             )}
