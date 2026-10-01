@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, CheckCircle2, Clipboard, ShieldCheck, Truck, Phone, User, Building2, Play, Video, Star, CreditCard, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
+import { CheckCircle2, ShieldCheck, Truck, Phone, User, Building2, Play, Video, Star, CreditCard, ChevronLeft, ChevronRight, X, ZoomIn } from 'lucide-react';
 import { Product } from '../types';
 import { getProductReviews } from '../utils/productReviews';
 import { createProductSnapshot, saveOrder } from '../utils/orderStorage';
@@ -28,7 +28,6 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
   onRelatedProductSelect,
   onOrderSuccess,
 }) => {
-  const [linkCopied, setLinkCopied] = useState(false);
   const [customerReviews, setCustomerReviews] = useState(() => getProductReviews(product));
   const [reviewName, setReviewName] = useState('');
   const [reviewCity, setReviewCity] = useState('');
@@ -150,16 +149,6 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
     setReviewComment('');
     setReviewRating(5);
     setReviewSubmitted(true);
-  };
-
-  const handleCopyProductLink = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setLinkCopied(true);
-      window.setTimeout(() => setLinkCopied(false), 2000);
-    } catch {
-      alert('تعذر نسخ الرابط. انسخ الرابط من شريط العنوان.');
-    }
   };
 
   const totalPrice = selectedBundleIndex !== null && product.bundles && product.bundles[selectedBundleIndex]
@@ -286,23 +275,23 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
     <div className="bg-slate-50 text-slate-900 min-h-screen pb-24 sm:pb-12 animate-fadeIn" dir="rtl">
       
       {/* 1. Top Announcement Bar */}
-      <div className="bg-slate-900 text-amber-300 text-sm font-bold py-2.5 px-4 text-center border-b border-amber-400/20 shadow-xs flex items-center justify-center gap-2">
-        <span>🚚 توصيل سريع لجميع مناطق ومدن المملكة العربية السعودية والدفع عند الاستلام 🇸🇦</span>
+      <div className="overflow-hidden border-b border-amber-400/20 bg-slate-900 py-2.5 text-sm font-bold text-amber-300 shadow-xs">
+        <div className="announcement-marquee-track inline-flex w-max">
+          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-64 whitespace-nowrap pe-64" dir="rtl">
+            <span>🚚 توصيل مجاني لجميع محافظات المملكة</span>
+            <span>💵 الدفع عند الاستلام بعد معاينة طلبك</span>
+            <span>⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
+          </div>
+          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-64 whitespace-nowrap pe-64" dir="rtl" aria-hidden="true">
+            <span>🚚 توصيل مجاني لجميع محافظات المملكة</span>
+            <span>💵 الدفع عند الاستلام بعد معاينة طلبك</span>
+            <span>⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
+          </div>
+        </div>
       </div>
 
       {/* 3. Main Container */}
       <main className="max-w-[1440px] mx-auto px-4 sm:px-6 pt-5 sm:pt-6 space-y-5">
-        <div className="flex justify-start">
-          <button
-            type="button"
-            onClick={handleCopyProductLink}
-            className="inline-flex min-h-10 items-center gap-2 rounded-lg border border-slate-300 bg-white px-4 text-sm font-bold text-slate-700 shadow-sm transition-colors hover:bg-slate-100"
-          >
-            {linkCopied ? <Check className="h-4 w-4 text-emerald-600" /> : <Clipboard className="h-4 w-4" />}
-            {linkCopied ? 'تم نسخ رابط المنتج' : 'نسخ رابط المنتج'}
-          </button>
-        </div>
-        
         {(() => {
           const badgeText = product.badge || '🔥 عرض خاص - توصيل مجاني';
           const headline = product.heroHeadline || product.title;

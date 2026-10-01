@@ -49,3 +49,33 @@
 		line-height: 1.6;
 	}
 }
+
+.announcement-marquee-track {
+	animation: announcement-marquee 28s linear infinite;
+}
+
+@keyframes announcement-marquee {
+	from {
+		transform: translateX(-50%);
+	}
+	to {
+		transform: translateX(0);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.announcement-marquee-track {
+		animation: none;
+		width: 100%;
+	}
+	.announcement-marquee-group {
+		width: 100%;
+		flex-direction: column;
+		gap: 0.25rem;
+		padding-inline-end: 0;
+		white-space: normal;
+	}
+	.announcement-marquee-group[aria-hidden="true"] {
+		display: none;
+	}
+}
