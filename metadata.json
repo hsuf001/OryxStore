@@ -1,0 +1,8 @@
+{
+  "name": "Oryx store",
+  "description": "منصة متجر إلكتروني وجهات هبوط مغربية متطورة مع نظام الدفع عند الاستلام والربط بـ Google Sheets",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
