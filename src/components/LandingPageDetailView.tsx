@@ -275,17 +275,17 @@ export const LandingPageDetailView: React.FC<LandingPageDetailViewProps> = ({
     <div className="bg-slate-50 text-slate-900 min-h-screen pb-24 sm:pb-12 animate-fadeIn" dir="rtl">
       
       {/* 1. Top Announcement Bar */}
-      <div className="overflow-hidden border-b border-amber-400/20 bg-slate-900 py-2.5 text-sm font-bold text-amber-300 shadow-xs">
+      <div className="overflow-hidden border-b border-amber-400/20 bg-slate-900 py-2.5 text-sm font-bold text-amber-300 shadow-xs" dir="ltr">
         <div className="announcement-marquee-track inline-flex w-max">
-          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-64 whitespace-nowrap pe-64" dir="rtl">
-            <span>🚚 توصيل مجاني لجميع محافظات المملكة</span>
-            <span>💵 الدفع عند الاستلام بعد معاينة طلبك</span>
-            <span>⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
+          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-80 whitespace-nowrap pe-80" dir="ltr">
+            <span dir="rtl">🚚 توصيل مجاني لجميع محافظات المملكة</span>
+            <span dir="rtl">💵 الدفع عند الاستلام بعد معاينة طلبك</span>
+            <span dir="rtl">⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
           </div>
-          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-64 whitespace-nowrap pe-64" dir="rtl" aria-hidden="true">
-            <span>🚚 توصيل مجاني لجميع محافظات المملكة</span>
-            <span>💵 الدفع عند الاستلام بعد معاينة طلبك</span>
-            <span>⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
+          <div className="announcement-marquee-group inline-flex shrink-0 items-center gap-80 whitespace-nowrap pe-80" dir="ltr" aria-hidden="true">
+            <span dir="rtl">🚚 توصيل مجاني لجميع محافظات المملكة</span>
+            <span dir="rtl">💵 الدفع عند الاستلام بعد معاينة طلبك</span>
+            <span dir="rtl">⚡ طلبك يوصلك لباب البيت بسرعة وأمان</span>
           </div>
         </div>
       </div>

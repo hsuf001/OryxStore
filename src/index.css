@@ -51,7 +51,7 @@
 }
 
 .announcement-marquee-track {
-	animation: announcement-marquee 28s linear infinite;
+	animation: announcement-marquee 24s linear infinite;
 }
 
 @keyframes announcement-marquee {
